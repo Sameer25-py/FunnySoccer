@@ -9,7 +9,16 @@ public class Ball : MonoBehaviour
 
     public void SetDirection(Vector2 dir)
     {
-        _direction = dir;
+        _rb2D.velocity        = Vector2.zero;
+        _rb2D.angularVelocity = 0f;
+        _direction            = dir;
+        _rb2D.AddForce(_direction * Speed);
+    }
+
+    public void Stop()
+    {
+        _rb2D.velocity        = Vector2.zero;
+        _rb2D.angularVelocity = 0f;
     }
 
     private void OnEnable()
@@ -22,10 +31,5 @@ public class Ball : MonoBehaviour
         _direction = Vector2.Reflect(_direction, col.contacts[0]
             .normal) * Random.Range(5f, 10f);
         _direction = _direction.normalized;
-    }
-
-    private void FixedUpdate()
-    {
-        _rb2D.velocity = _direction * (Time.deltaTime * Speed);
     }
 }

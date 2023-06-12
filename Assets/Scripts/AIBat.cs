@@ -21,18 +21,35 @@ namespace DefaultNamespace
         private Ball _ball;
 
         private float _elapsedTime = 0f;
+        
+        private BoxCollider2D _boxCollider;
 
         private void OnEnable()
         {
             _ball        = FindObjectOfType<Ball>(true);
             _newPosition = transform.position;
+            _boxCollider = GetComponent<BoxCollider2D>();
+        }
+        
+        private void EnableCollider()
+        {
+            _boxCollider.enabled = true;
+        }
+
+        private void OnCollisionEnter2D(Collision2D col)
+        {
+            if (col.gameObject.CompareTag("Ball"))
+            {
+                _boxCollider.enabled = false;
+                Invoke(nameof(EnableCollider), 1f);
+            }
         }
 
         private void Update()
         {
             if (!_ball) return;
             _elapsedTime += Time.deltaTime;
-            if (_elapsedTime > coolDown)
+            if (_elapsedTime >= coolDown)
             {
                 _elapsedTime = 0f;
                 float distance = Vector2.Distance(_ball.transform.position, transform.position);
@@ -52,7 +69,7 @@ namespace DefaultNamespace
 
         private void FixedUpdate()
         {
-            float step = 5f * Time.deltaTime;
+            float step = 3f * Time.deltaTime;
             transform.position = Vector2.MoveTowards(transform.position, _newPosition, step);
         }
     }
